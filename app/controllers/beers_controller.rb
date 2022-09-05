@@ -1,29 +1,19 @@
-require 'net/http'
+require 'beer_service'
 class BeersController < ActionController::API
-    BASE_URLS_ARRAY = ['https://api.punkapi.com/v2/beers']
-
+    attr_accessor :beer_service
     def get_beer
         id = params[:id]
         begin
-            all_beers = []
-            BASE_URLS_ARRAY.each do |url|
-                uri = URI(url+"/#{id}")
-                all_beers = make_api_call(uri)
-            end
-            render json: { data: all_beers }
+            beer = beer_service.get_beer(id)
+            render json: { data: beer }
         rescue Exception => e
             render json: e.message
         end
     end
 
     def get_all_beers
-        id = params[:id]
         begin
-            all_beers = []
-            BASE_URLS_ARRAY.each do |url|
-                uri = URI(url)
-                all_beers << make_api_call(uri)
-            end
+            all_beers = beer_service.get_all_beers
             render json: { data: all_beers }
         rescue Exception => e
             render json: e.message
@@ -33,11 +23,7 @@ class BeersController < ActionController::API
     def search_beer
         name = params[:name]
         begin
-            all_beers = []
-            BASE_URLS_ARRAY.each do |url|
-                uri = URI(url+"?beer_name=#{name}")
-                all_beers << make_api_call(uri)
-            end
+            all_beers = beer_service.search_beers(name)
             render json: { data: all_beers }
         rescue Exception => e
             render json: e.message
@@ -45,11 +31,7 @@ class BeersController < ActionController::API
     end
 
     private
-
-    def make_api_call(url)
-        res = Net::HTTP.get_response(url)
-        response = JSON.parse(res.body)
-        response = response.map { |b| Beer.new(b) }
-        response
+    def beer_service
+        @beer_service ||= BeerService.new
     end
 end
