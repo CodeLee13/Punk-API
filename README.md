@@ -15,4 +15,4 @@ Extra question:
     • What happens if in a couple of months, we are asked to get beers from 2 different external APIs? What would we have to change? 
     
 Because of the above structure we will have flexibility to add multiple apis and fetch data from those apis.
- New Service class will be created and then it will be integrated into beer service class. 
+The New Service class will be created and then it will be integrated into beer service class. 
